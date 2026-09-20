@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { getAllUsers, getUserContacts } = require("../controllers/adminController");
+const { getAllUsers, getUserContacts } = require("../controllers/AdminController");
 const authMiddleware = require("../middleware/authMiddleware");
 const isAdmin = require("../middleware/isAdmin");
 
