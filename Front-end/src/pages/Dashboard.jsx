@@ -1,3 +1,5 @@
+
+import { API_URL } from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
@@ -105,7 +107,7 @@ function Dashboard() {
             setError("");
 
             const response = await fetch(
-                "http://localhost:5000/api/contacts",
+                `${API_URL}/api/contacts`,
                 {
                     method: "GET",
 
@@ -158,7 +160,7 @@ function Dashboard() {
             setUsersLoading(true);
 
             const response = await fetch(
-                "http://localhost:5000/api/admin/users",
+                `${API_URL}/api/admin/users`,
                 {
                     method: "GET",
 
@@ -207,7 +209,7 @@ function Dashboard() {
         try {
 
             const response = await fetch(
-                `http://localhost:5000/api/admin/users/${user.id}/contacts`,
+                `${API_URL}/api/admin/users/${user.id}/contacts`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
