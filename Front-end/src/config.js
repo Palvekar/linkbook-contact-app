@@ -1,1 +1,1 @@
-export const API_URL = "https://linkbook-contact-app.onrender.com";
+   export const API_URL = "https://contact-book-backend-b5bjghgnepfsgpgy.westus3-01.azurewebsites.net";
