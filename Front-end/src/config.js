@@ -1,1 +1,1 @@
-   export const API_URL = "https://contact-book-backend-b5bjghgnepfsgpgy.westus3-01.azurewebsites.net";
+   export const API_URL = "https://linkbook-backend-payal-cmdndxa8exfmftdd.centralindia-01.azurewebsites.net";

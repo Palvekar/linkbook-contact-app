@@ -1,4 +1,3 @@
-
 import { API_URL } from "../config";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -11,8 +10,6 @@ function Dashboard() {
     // =========================
     // CONTACTS STATE
     // =========================
-
-    
 
     const [contacts, setContacts] = useState([]);
 
@@ -73,17 +70,25 @@ function Dashboard() {
 
     const [showPopup, setShowPopup] = useState(false);
 
+
     // =========================
-    // ADMIN STATE 
+    // ADMIN STATE
     // =========================
 
     const [role] = useState(localStorage.getItem("role"));
+
     const [showUsersPanel, setShowUsersPanel] = useState(false);
+
     const [allUsers, setAllUsers] = useState([]);
+
     const [usersLoading, setUsersLoading] = useState(false);
+
     const [selectedUser, setSelectedUser] = useState(null);
+
     const [selectedUserContacts, setSelectedUserContacts] = useState([]);
+
     const [userContactsLoading, setUserContactsLoading] = useState(false);
+
 
     // =====================================================
     // FETCH CONTACTS
@@ -93,8 +98,6 @@ function Dashboard() {
 
         const token = localStorage.getItem("token");
 
-        // If token does not exist,
-        // send user back to login page
         if (!token) {
             navigate("/");
             return;
@@ -141,6 +144,7 @@ function Dashboard() {
             setLoading(false);
         }
     };
+
 
     // =====================================================
     // FETCH ALL USERS (ADMIN ONLY)
@@ -195,6 +199,7 @@ function Dashboard() {
         }
     };
 
+
     // =====================================================
     // FETCH ONE USER'S CONTACTS (ADMIN ONLY)
     // =====================================================
@@ -204,6 +209,7 @@ function Dashboard() {
         const token = localStorage.getItem("token");
 
         setSelectedUser(user);
+
         setUserContactsLoading(true);
 
         try {
@@ -220,18 +226,35 @@ function Dashboard() {
             const data = await response.json();
 
             if (response.ok) {
-                setSelectedUserContacts(data.contacts || []);
+
+                setSelectedUserContacts(
+                    data.contacts || []
+                );
+
             } else {
-                setError(data.message || "Unable to fetch user contacts");
+
+                setError(
+                    data.message ||
+                    "Unable to fetch user contacts"
+                );
             }
 
         } catch (error) {
-            console.error("Fetch User Contacts Error:", error);
+
+            console.error(
+                "Fetch User Contacts Error:",
+                error
+            );
+
             setError("Unable to connect to server");
+
         } finally {
+
             setUserContactsLoading(false);
         }
     };
+
+
     // =====================================================
     // FETCH CONTACTS WHEN DASHBOARD LOADS
     // =====================================================
@@ -253,12 +276,10 @@ function Dashboard() {
 
         setShowPopup(true);
 
-        // Hide popup after 3 seconds
         setTimeout(() => {
             setShowPopup(false);
         }, 3000);
 
-        // Remove message after animation
         setTimeout(() => {
             setMessage("");
         }, 3400);
@@ -286,7 +307,6 @@ function Dashboard() {
 
     const handleAddContact = async () => {
 
-        // Validation
         if (
             !newContact.name.trim() ||
             !newContact.phone.trim()
@@ -306,8 +326,6 @@ function Dashboard() {
             return;
         }
 
-        // FormData is required because
-        // we are sending an image
         const formData = new FormData();
 
         formData.append(
@@ -330,7 +348,6 @@ function Dashboard() {
             newContact.address.trim()
         );
 
-        // Add image only if user selected one
         if (image) {
 
             formData.append(
@@ -342,7 +359,7 @@ function Dashboard() {
         try {
 
             const response = await fetch(
-                "http://localhost:5000/api/contacts",
+                `${API_URL}/api/contacts`,
                 {
                     method: "POST",
 
@@ -358,10 +375,8 @@ function Dashboard() {
 
             if (response.ok) {
 
-                // Refresh contacts
                 await fetchContacts();
 
-                // Clear form
                 setNewContact({
                     name: "",
                     phone: "",
@@ -369,16 +384,12 @@ function Dashboard() {
                     address: ""
                 });
 
-                // Clear image
                 setImage(null);
 
-                // Close form
                 setShowAddForm(false);
 
-                // Clear old error
                 setError("");
 
-                // Show success message
                 showMessage(
                     "Contact saved successfully!"
                 );
@@ -423,13 +434,10 @@ function Dashboard() {
             address: contact.address || ""
         });
 
-        // Reset selected image
         setEditImage(null);
 
-        // Clear errors
         setError("");
 
-        // Show edit form
         setShowEditForm(true);
     };
 
@@ -455,7 +463,6 @@ function Dashboard() {
 
     const handleUpdateContact = async () => {
 
-        // Validation
         if (
             !editContact.name.trim() ||
             !editContact.phone.trim()
@@ -499,7 +506,6 @@ function Dashboard() {
             editContact.address.trim()
         );
 
-        // Add new image only if selected
         if (editImage) {
 
             formData.append(
@@ -511,7 +517,7 @@ function Dashboard() {
         try {
 
             const response = await fetch(
-                `http://localhost:5000/api/contacts/${editContact.id}`,
+                `${API_URL}/api/contacts/${editContact.id}`,
                 {
                     method: "PUT",
 
@@ -527,13 +533,10 @@ function Dashboard() {
 
             if (response.ok) {
 
-                // Refresh contacts
                 await fetchContacts();
 
-                // Close edit form
                 setShowEditForm(false);
 
-                // Reset edit contact
                 setEditContact({
                     id: null,
                     name: "",
@@ -542,13 +545,10 @@ function Dashboard() {
                     address: ""
                 });
 
-                // Reset edit image
                 setEditImage(null);
 
-                // Clear error
                 setError("");
 
-                // Show success message
                 showMessage(
                     "Contact updated successfully!"
                 );
@@ -581,13 +581,10 @@ function Dashboard() {
 
     const handleDeleteClick = (id) => {
 
-        // Store selected contact ID
         setDeleteContactId(id);
 
-        // Open custom popup
         setShowDeletePopup(true);
 
-        // Clear old error
         setError("");
     };
 
@@ -610,7 +607,6 @@ function Dashboard() {
 
     const handleDelete = async () => {
 
-        // Make sure an ID exists
         if (!deleteContactId) {
 
             return;
@@ -628,7 +624,7 @@ function Dashboard() {
         try {
 
             const response = await fetch(
-                `http://localhost:5000/api/contacts/${deleteContactId}`,
+                `${API_URL}/api/contacts/${deleteContactId}`,
                 {
                     method: "DELETE",
 
@@ -642,7 +638,6 @@ function Dashboard() {
 
             if (response.ok) {
 
-                // Remove contact from UI
                 setContacts((prevContacts) =>
                     prevContacts.filter(
                         (contact) =>
@@ -650,16 +645,12 @@ function Dashboard() {
                     )
                 );
 
-                // Close popup
                 setShowDeletePopup(false);
 
-                // Clear ID
                 setDeleteContactId(null);
 
-                // Clear error
                 setError("");
 
-                // Success message
                 showMessage(
                     "Contact deleted successfully!"
                 );
@@ -684,59 +675,69 @@ function Dashboard() {
             );
         }
     };
-// =====================================================
-// GET CONTACT INITIALS
-// =====================================================
 
-const getInitials = (name) => {
 
-    if (!name) {
-        return "?";
-    }
+    // =====================================================
+    // GET CONTACT INITIALS
+    // =====================================================
 
-    const words = name.trim().split(/\s+/);
+    const getInitials = (name) => {
 
-    // Single name
-    if (words.length === 1) {
-        return words[0].charAt(0).toUpperCase();
-    }
-
-    // First name + last name
-    return (
-        words[0].charAt(0) +
-        words[words.length - 1].charAt(0)
-    ).toUpperCase();
-};
-
-const highlightText = (text, searchValue) => {
-
-    if (!searchValue) {
-        return text;
-    }
-
-    const textString = String(text || "");
-
-    const parts = textString.split(
-        new RegExp(`(${searchValue})`, "gi")
-    );
-
-    return parts.map((part, index) => {
-
-        if (
-            part.toLowerCase() ===
-            searchValue.toLowerCase()
-        ) {
-
-            return (
-                <mark key={index}>
-                    {part}
-                </mark>
-            );
+        if (!name) {
+            return "?";
         }
 
-        return part;
-    });
-};
+        const words = name.trim().split(/\s+/);
+
+        if (words.length === 1) {
+
+            return words[0]
+                .charAt(0)
+                .toUpperCase();
+        }
+
+        return (
+            words[0].charAt(0) +
+            words[words.length - 1].charAt(0)
+        ).toUpperCase();
+    };
+
+
+    // =====================================================
+    // HIGHLIGHT SEARCH TEXT
+    // =====================================================
+
+    const highlightText = (text, searchValue) => {
+
+        if (!searchValue) {
+            return text;
+        }
+
+        const textString = String(text || "");
+
+        const parts = textString.split(
+            new RegExp(`(${searchValue})`, "gi")
+        );
+
+        return parts.map((part, index) => {
+
+            if (
+                part.toLowerCase() ===
+                searchValue.toLowerCase()
+            ) {
+
+                return (
+                    <mark key={index}>
+                        {part}
+                    </mark>
+                );
+            }
+
+            return part;
+        });
+    };
+
+
     // =====================================================
     // SEARCH CONTACTS
     // =====================================================
@@ -925,13 +926,13 @@ const highlightText = (text, searchValue) => {
                     CONTACT HEADER
                 ===================================== */}
 
-                              <div className="contacts-header">
+                <div className="contacts-header">
 
                     <h2>
                         Your Contacts
                     </h2>
 
-                                     <div className="contacts-header-actions">
+                    <div className="contacts-header-actions">
 
                         <button
                             className="add-contact-btn"
@@ -982,9 +983,6 @@ const highlightText = (text, searchValue) => {
                             Add New Contact
                         </h2>
 
-
-                        {/* Name */}
-
                         <input
                             type="text"
                             name="name"
@@ -994,9 +992,6 @@ const highlightText = (text, searchValue) => {
                                 handleNewContactChange
                             }
                         />
-
-
-                        {/* Phone */}
 
                         <input
                             type="text"
@@ -1008,9 +1003,6 @@ const highlightText = (text, searchValue) => {
                             }
                         />
 
-
-                        {/* Email */}
-
                         <input
                             type="email"
                             name="email"
@@ -1021,9 +1013,6 @@ const highlightText = (text, searchValue) => {
                             }
                         />
 
-
-                        {/* Address */}
-
                         <input
                             type="text"
                             name="address"
@@ -1033,9 +1022,6 @@ const highlightText = (text, searchValue) => {
                                 handleNewContactChange
                             }
                         />
-
-
-                        {/* Image */}
 
                         <input
                             type="file"
@@ -1051,9 +1037,6 @@ const highlightText = (text, searchValue) => {
                             }}
                         />
 
-
-                        {/* Buttons */}
-
                         <div className="form-buttons">
 
                             <button
@@ -1064,7 +1047,6 @@ const highlightText = (text, searchValue) => {
                             >
                                 Save Contact
                             </button>
-
 
                             <button
                                 className="cancel-btn"
@@ -1094,9 +1076,6 @@ const highlightText = (text, searchValue) => {
                             Update Contact
                         </h2>
 
-
-                        {/* Name */}
-
                         <input
                             type="text"
                             name="name"
@@ -1106,9 +1085,6 @@ const highlightText = (text, searchValue) => {
                                 handleEditContactChange
                             }
                         />
-
-
-                        {/* Phone */}
 
                         <input
                             type="text"
@@ -1120,9 +1096,6 @@ const highlightText = (text, searchValue) => {
                             }
                         />
 
-
-                        {/* Email */}
-
                         <input
                             type="email"
                             name="email"
@@ -1133,9 +1106,6 @@ const highlightText = (text, searchValue) => {
                             }
                         />
 
-
-                        {/* Address */}
-
                         <input
                             type="text"
                             name="address"
@@ -1145,9 +1115,6 @@ const highlightText = (text, searchValue) => {
                                 handleEditContactChange
                             }
                         />
-
-
-                        {/* New Image */}
 
                         <input
                             type="file"
@@ -1163,9 +1130,6 @@ const highlightText = (text, searchValue) => {
                             }}
                         />
 
-
-                        {/* Buttons */}
-
                         <div className="form-buttons">
 
                             <button
@@ -1176,7 +1140,6 @@ const highlightText = (text, searchValue) => {
                             >
                                 Update Contact
                             </button>
-
 
                             <button
                                 className="cancel-btn"
@@ -1258,30 +1221,34 @@ const highlightText = (text, searchValue) => {
                                 key={contact.id}
                             >
 
-
                                 {/* =====================
                                     CONTACT IMAGE
                                 ===================== */}
-    
 
-<div className="contact-image">
+                                <div className="contact-image">
 
-    {contact.image_path ? (
+                                    {contact.image_path ? (
 
-        <img
-            src={`http://localhost:5000/${contact.image_path}`}
-            alt={contact.name || "Contact"}
-        />
+                                        <img
+                                            src={`${API_URL}/${contact.image_path}`}
+                                            alt={
+                                                contact.name ||
+                                                "Contact"
+                                            }
+                                        />
 
-    ) : (
+                                    ) : (
 
-        <span className="contact-initials">
-            {getInitials(contact.name)}
-        </span>
+                                        <span className="contact-initials">
+                                            {getInitials(
+                                                contact.name
+                                            )}
+                                        </span>
 
-    )}
+                                    )}
 
-</div>
+                                </div>
+
 
                                 {/* =====================
                                     CONTACT INFORMATION
@@ -1290,28 +1257,37 @@ const highlightText = (text, searchValue) => {
                                 <div className="contact-info">
 
                                     <h3>
-                                        {highlightText(contact.name, search)}
+                                        {highlightText(
+                                            contact.name,
+                                            search
+                                        )}
                                     </h3>
 
-
                                     <p>
-                                        {highlightText(contact.phone, search)}
+                                        {highlightText(
+                                            contact.phone,
+                                            search
+                                        )}
                                     </p>
-
 
                                     {contact.email && (
 
                                         <p>
-                                            {highlightText(contact.email, search)}
+                                            {highlightText(
+                                                contact.email,
+                                                search
+                                            )}
                                         </p>
 
                                     )}
 
-
                                     {contact.address && (
 
                                         <p>
-                                            {highlightText(contact.address, search)}
+                                            {highlightText(
+                                                contact.address,
+                                                search
+                                            )}
                                         </p>
 
                                     )}
@@ -1323,9 +1299,6 @@ const highlightText = (text, searchValue) => {
 
                                     <div className="contact-actions">
 
-
-                                        {/* UPDATE */}
-
                                         <button
                                             className="update-btn"
                                             onClick={() =>
@@ -1336,9 +1309,6 @@ const highlightText = (text, searchValue) => {
                                         >
                                             Update
                                         </button>
-
-
-                                        {/* DELETE */}
 
                                         <button
                                             className="delete-btn"
@@ -1374,35 +1344,20 @@ const highlightText = (text, searchValue) => {
 
                         <div className="delete-modal">
 
-
-                            {/* Icon */}
-
                             <div className="delete-modal-icon">
                                 !
                             </div>
 
-
-                            {/* Title */}
-
                             <h2>
                                 Delete Contact?
                             </h2>
-
-
-                            {/* Message */}
 
                             <p>
                                 Are you sure you want
                                 to delete this contact?
                             </p>
 
-
-                            {/* Buttons */}
-
                             <div className="delete-modal-actions">
-
-
-                                {/* Cancel */}
 
                                 <button
                                     className="cancel-delete-btn"
@@ -1412,9 +1367,6 @@ const highlightText = (text, searchValue) => {
                                 >
                                     Cancel
                                 </button>
-
-
-                                {/* Confirm Delete */}
 
                                 <button
                                     className="confirm-delete-btn"
@@ -1432,7 +1384,9 @@ const highlightText = (text, searchValue) => {
                     </div>
 
                 )}
-                                            {/* =====================================
+
+
+                {/* =====================================
                     ADMIN: MANAGE USERS PANEL
                 ===================================== */}
 
@@ -1444,99 +1398,200 @@ const highlightText = (text, searchValue) => {
 
                             {!selectedUser && (
                                 <>
-                                    <h2>All Users</h2>
+
+                                    <h2>
+                                        All Users
+                                    </h2>
 
                                     {usersLoading && (
-                                        <p className="status-message">Loading users...</p>
+                                        <p className="status-message">
+                                            Loading users...
+                                        </p>
                                     )}
 
-                                    {!usersLoading && allUsers.length === 0 && (
-                                        <p className="status-message">No users found.</p>
+                                    {!usersLoading &&
+                                        allUsers.length === 0 && (
+
+                                        <p className="status-message">
+                                            No users found.
+                                        </p>
+
                                     )}
 
-                                    {!usersLoading && allUsers.length > 0 && (
+                                    {!usersLoading &&
+                                        allUsers.length > 0 && (
 
                                         <table className="users-table">
+
                                             <thead>
+
                                                 <tr>
-                                                    <th>Name</th>
-                                                    <th>Email</th>
-                                                    <th>Role</th>
+
+                                                    <th>
+                                                        Name
+                                                    </th>
+
+                                                    <th>
+                                                        Email
+                                                    </th>
+
+                                                    <th>
+                                                        Role
+                                                    </th>
+
                                                 </tr>
+
                                             </thead>
 
                                             <tbody>
-                                                {allUsers.map((user) => (
+
+                                                {allUsers.map(
+                                                    (user) => (
+
                                                     <tr
                                                         key={user.id}
                                                         className="users-table-row"
-                                                        onClick={() => handleViewUserContacts(user)}
+                                                        onClick={() =>
+                                                            handleViewUserContacts(
+                                                                user
+                                                            )
+                                                        }
                                                     >
-                                                        <td>{user.name}</td>
-                                                        <td>{user.email}</td>
+
                                                         <td>
-                                                            <span className={`role-badge ${user.role}`}>
+                                                            {user.name}
+                                                        </td>
+
+                                                        <td>
+                                                            {user.email}
+                                                        </td>
+
+                                                        <td>
+
+                                                            <span
+                                                                className={`role-badge ${user.role}`}
+                                                            >
                                                                 {user.role}
                                                             </span>
+
                                                         </td>
+
                                                     </tr>
+
                                                 ))}
+
                                             </tbody>
+
                                         </table>
 
                                     )}
 
                                     <div className="delete-modal-actions">
+
                                         <button
                                             className="cancel-delete-btn"
-                                            onClick={() => setShowUsersPanel(false)}
+                                            onClick={() =>
+                                                setShowUsersPanel(
+                                                    false
+                                                )
+                                            }
                                         >
                                             Close
                                         </button>
+
                                     </div>
+
                                 </>
                             )}
 
+
                             {selectedUser && (
                                 <>
-                                    <h2>{selectedUser.name}'s Contacts</h2>
+
+                                    <h2>
+                                        {selectedUser.name}'s Contacts
+                                    </h2>
 
                                     {userContactsLoading && (
-                                        <p className="status-message">Loading contacts...</p>
+
+                                        <p className="status-message">
+                                            Loading contacts...
+                                        </p>
+
                                     )}
 
-                                    {!userContactsLoading && selectedUserContacts.length === 0 && (
-                                        <p className="status-message">This user has no contacts.</p>
+                                    {!userContactsLoading &&
+                                        selectedUserContacts.length === 0 && (
+
+                                        <p className="status-message">
+                                            This user has no contacts.
+                                        </p>
+
                                     )}
 
-                                    {!userContactsLoading && selectedUserContacts.length > 0 && (
+                                    {!userContactsLoading &&
+                                        selectedUserContacts.length > 0 && (
 
                                         <div className="user-contacts-list">
 
-                                            {selectedUserContacts.map((contact) => (
-                                                <div className="user-contact-item" key={contact.id}>
+                                            {selectedUserContacts.map(
+                                                (contact) => (
+
+                                                <div
+                                                    className="user-contact-item"
+                                                    key={contact.id}
+                                                >
 
                                                     <div className="contact-image">
+
                                                         {contact.image_path ? (
+
                                                             <img
-                                                                src={`http://localhost:5000/${contact.image_path}`}
-                                                                alt={contact.name || "Contact"}
+                                                                src={`${API_URL}/${contact.image_path}`}
+                                                                alt={
+                                                                    contact.name ||
+                                                                    "Contact"
+                                                                }
                                                             />
+
                                                         ) : (
+
                                                             <span className="contact-initials">
-                                                                {getInitials(contact.name)}
+                                                                {getInitials(
+                                                                    contact.name
+                                                                )}
                                                             </span>
+
                                                         )}
+
                                                     </div>
 
                                                     <div>
-                                                        <h3>{contact.name}</h3>
-                                                        <p>{contact.phone}</p>
-                                                        {contact.email && <p>{contact.email}</p>}
-                                                        {contact.address && <p>{contact.address}</p>}
+
+                                                        <h3>
+                                                            {contact.name}
+                                                        </h3>
+
+                                                        <p>
+                                                            {contact.phone}
+                                                        </p>
+
+                                                        {contact.email && (
+                                                            <p>
+                                                                {contact.email}
+                                                            </p>
+                                                        )}
+
+                                                        {contact.address && (
+                                                            <p>
+                                                                {contact.address}
+                                                            </p>
+                                                        )}
+
                                                     </div>
 
                                                 </div>
+
                                             ))}
 
                                         </div>
@@ -1544,13 +1599,20 @@ const highlightText = (text, searchValue) => {
                                     )}
 
                                     <div className="delete-modal-actions">
+
                                         <button
                                             className="cancel-delete-btn"
-                                            onClick={() => setSelectedUser(null)}
+                                            onClick={() =>
+                                                setSelectedUser(
+                                                    null
+                                                )
+                                            }
                                         >
                                             Back to Users
                                         </button>
+
                                     </div>
+
                                 </>
                             )}
 
@@ -1567,6 +1629,3 @@ const highlightText = (text, searchValue) => {
 }
 
 export default Dashboard;
-
-
-

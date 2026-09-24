@@ -2,19 +2,18 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { API_URL } from "../config";
+
 function Register() {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [message, setMessage] = useState("");
+    const [showPopup, setShowPopup] = useState(false);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-const [name, setName] = useState("");
-const [email, setEmail] = useState("");
-const [password, setPassword] = useState("");
-const [message, setMessage] = useState("");
-const [showPopup, setShowPopup] = useState(false);
-const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-const navigate = useNavigate();
-
+    const navigate = useNavigate();
 
     const showMessage = (text) => {
-
         setMessage(text);
         setShowPopup(true);
 
@@ -27,22 +26,17 @@ const navigate = useNavigate();
         }, 3400);
     };
 
-
     const handleRegister = async (e) => {
-
         e.preventDefault();
 
         try {
-
             const response = await fetch(
-                "http://localhost:5000/api/auth/register",
+                `${API_URL}/api/auth/register`,
                 {
                     method: "POST",
-
                     headers: {
                         "Content-Type": "application/json"
                     },
-
                     body: JSON.stringify({
                         name: name,
                         email: email,
@@ -51,55 +45,40 @@ const navigate = useNavigate();
                 }
             );
 
-
             const data = await response.json();
 
-
             if (response.ok) {
-
                 showMessage("Account created successfully!");
 
                 setTimeout(() => {
                     navigate("/");
                 }, 800);
-
             } else {
-
                 showMessage(data.message);
             }
-
         } catch (error) {
-
             console.error("Register Error:", error);
-
             showMessage("Unable to connect to server");
         }
     };
 
-
     return (
-
         <div className="login-page">
-
             <div className="login-card">
 
                 <div className="logo">
-                 ♧
+                    ♧
                 </div>
 
-
                 <h1>Create your LinkBook account</h1>
-
 
                 <p className="subtitle">
                     Start managing your contacts securely.
                 </p>
 
-
                 <form onSubmit={handleRegister}>
 
                     <div className="form-group">
-
                         <label>Name</label>
 
                         <input
@@ -108,12 +87,9 @@ const navigate = useNavigate();
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                         />
-
                     </div>
 
-
                     <div className="form-group">
-
                         <label>Email</label>
 
                         <input
@@ -122,16 +98,12 @@ const navigate = useNavigate();
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
-
                     </div>
 
-
                     <div className="form-group">
-
                         <label>Password</label>
 
                         <div className="password-input-wrapper">
-
                             <input
                                 type={isPasswordVisible ? "text" : "password"}
                                 placeholder="Create a password"
@@ -146,13 +118,10 @@ const navigate = useNavigate();
                                     setIsPasswordVisible(!isPasswordVisible)
                                 }
                             >
-                              {isPasswordVisible ? <FaEye /> : <FaEyeSlash />}
+                                {isPasswordVisible ? <FaEye /> : <FaEyeSlash />}
                             </button>
-
                         </div>
-
                     </div>
-
 
                     <button
                         type="submit"
@@ -163,9 +132,7 @@ const navigate = useNavigate();
 
                 </form>
 
-
                 {message && (
-
                     <div
                         className={`login-popup ${
                             message === "Account created successfully!"
@@ -177,27 +144,19 @@ const navigate = useNavigate();
                                 : "popup-hide"
                         }`}
                     >
-
                         <span className="popup-icon">
-
                             {message === "Account created successfully!"
                                 ? "✓"
                                 : "✕"}
-
                         </span>
-
 
                         <span>
                             {message}
                         </span>
-
                     </div>
-
                 )}
 
-
                 <p className="register-text">
-
                     Already have an account?
 
                     <button
@@ -207,11 +166,9 @@ const navigate = useNavigate();
                     >
                         Login
                     </button>
-
                 </p>
 
             </div>
-
         </div>
     );
 }
