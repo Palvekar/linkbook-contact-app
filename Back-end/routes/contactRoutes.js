@@ -1,7 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
+// fs and path are no longer needed here since we're not saving to local disk
 
 const {
     createContact,
@@ -15,31 +14,9 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// Absolute path for uploads folder
-const uploadsDir = path.join(__dirname, "..", "uploads");
-
-// Create uploads folder if it does not exist
-if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-// Multer storage configuration
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadsDir);
-    },
-
-    filename: function (req, file, cb) {
-        const uniqueName =
-            Date.now() +
-            "-" +
-            Math.round(Math.random() * 1E9) +
-            "-" +
-            file.originalname;
-
-        cb(null, uniqueName);
-    }
-});
+// Multer memory storage — keeps the file in RAM as a buffer
+// instead of writing it to local disk
+const storage = multer.memoryStorage();
 
 const upload = multer({ storage: storage });
 
