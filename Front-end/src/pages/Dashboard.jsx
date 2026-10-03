@@ -1230,7 +1230,7 @@ function Dashboard() {
                                     {contact.image_path ? (
 
                                         <img
-                                            src={`${API_URL}/${contact.image_path}`}
+                                            src={contact.image_path}
                                             alt={
                                                 contact.name ||
                                                 "Contact"
@@ -1547,7 +1547,7 @@ function Dashboard() {
                                                         {contact.image_path ? (
 
                                                             <img
-                                                                src={`${API_URL}/${contact.image_path}`}
+                                                                src={contact.image_path}
                                                                 alt={
                                                                     contact.name ||
                                                                     "Contact"
